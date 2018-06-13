@@ -3,6 +3,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 const hbs = require('hbs');
 const moment = require('moment');
+var path = require('path');
 const os = require('os');
 const {ObjectID} = require('mongodb');
 
@@ -15,6 +16,7 @@ var {User} = require('./models/user.js');
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine','hbs');
 
 //We create the port for Heroku and a TS
@@ -24,7 +26,7 @@ const PORT = process.env.PORT||5000;
 
  //we setup a get route for the home printing out 
 app.get('/',(req,res)=>{
-    res.render('./home.hbs',{ts});
+    res.render('home.hbs',{ts});
     console.log('Connected to HOME '+ts);
 }); 
 
@@ -43,12 +45,12 @@ app.get('/todos/:id',(req,res) => {
     var id = req.params.id;
     if(!ObjectID.isValid(id)){
             res.status(404);// Uncommet this line and comment next line to pass the test..send();
-            res.render('./404.hbs');
+            res.render('404.hbs');
         } else {
             Todo.findById(id).then((todo)=>{
                 if(!todo){
                     res.status(404);// Uncommet this line and comment next line to pass the test. .send();
-                    res.render('./404.hbs');
+                    res.render('404.hbs');
                 } else {
                     //FInally response as an object{...}
                     res.send({todo});
