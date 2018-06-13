@@ -24,7 +24,7 @@ const PORT = process.env.PORT||5000;
 
  //we setup a get route for the home printing out 
 app.get('/',(req,res)=>{
-    res.render('home.hbs',{ts});
+    res.render('./home.hbs',{ts});
     console.log('Connected to HOME '+ts);
 }); 
 
