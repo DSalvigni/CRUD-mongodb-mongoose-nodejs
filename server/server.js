@@ -31,7 +31,7 @@ app.get('/',(req,res)=>{
 }); 
 
 
-
+//Show all the notes
 app.get('/todos',(req,res) => {
     Todo.find().then((todos)=>{
         res.send({todos})
@@ -40,10 +40,10 @@ app.get('/todos',(req,res) => {
     })
 }); 
 
-//Query per id
+//Find a note per id
 app.get('/todos/:id',(req,res) => {
     var id = req.params.id;
-    if(!ObjectID.isValid(id)){
+if(!ObjectID.isValid(id)){
             res.status(404);// Uncommet this line and comment next line to pass the test..send();
             res.render('404.hbs');
         } else {
@@ -62,9 +62,40 @@ app.get('/todos/:id',(req,res) => {
 }); 
 
 
+app.get('/todos/delete/:id',(req,res)=>{
+    var id = req.params.id;
+    if(!ObjectID.isValid(id)){
+        res.status(404);// Uncommet this line and comment next line to pass the test..send();
+        res.render('404.hbs');
+    } else {
+
+
+        Todo.findOneAndRemove(id).then((doc)=>{
+            if(doc){
+                //console.log('Removed ->'+JSON.stringify(doc,undefined,2));
+                res.render('deleted.hbs',{doc});
+            } else {
+                res.status(404);// Uncommet this line and comment next line to pass the test. .send();
+                res.render('404.hbs');
+            }
+            }
+        ).catch((e)=> 
+        {
+          //console.log(e);
+          res.status(400).send();
+        });
+    }
+}); 
 
 
 
+
+
+//delete a note per id
+
+
+
+//Add a new note
 app.post('/todos',(req,res)=>{
     todo = new Todo({
         text: req.body.text

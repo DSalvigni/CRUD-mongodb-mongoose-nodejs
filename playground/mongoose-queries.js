@@ -4,8 +4,8 @@ const {User} = require('./../server/models/user.js');
 const {ObjectID} = require('mongodb');
 
 //var id = '5b1fd9232001cb1b9814277a';
-var id = '5b1fd923ds01cb1b9814277a';
-var id = '5b1fe1a0d4e745cae4383e08';
+//var id = '5b1fd923ds01cb1b9814277a';
+var id = '5b21209f00e8e134bc8cfe15';
 
 
 
@@ -37,28 +37,37 @@ var id = '5b1fe1a0d4e745cae4383e08';
 //     console.log('ID Is not valid');
 // }
 
-Todo.findById(id).then((todos)=>{
-    if(!todos){
-        return console.log('Nothing found');
-    }
-    console.log('Todos',todos);
+// Todo.findById(id).then((todos)=>{
+//     if(!todos){
+//         return console.log('Nothing found');
+//     }
+//     console.log('Todos',todos);
 
-}).catch((e)=> console.log(e));
+// }).catch((e)=> console.log(e));
 
-User.findById(id).then((users)=>{
-    if(!users){
-       console.log('Nothing found');
-    }
-    else{
-        console.log('User email',users.email);
-    }
-}).catch((e)=> console.log(e));
+// User.findById(id).then((users)=>{
+//     if(!users){
+//        console.log('Nothing found');
+//     }
+//     else{
+//         console.log('User email',users.email);
+//     }
+// }).catch((e)=> console.log(e));
 
-User.findById(id).then((users)=>{
-    if(!users){
-       console.log('Nothing found');
+// User.findById(id).then((users)=>{
+//     if(!users){
+//        console.log('Nothing found');
+//     }
+//     else{
+//         console.log('User email',JSON.stringify(users,undefined,2));
+//     }
+// }).catch((e)=> console.log(e));
+
+Todo.findOneAndRemove(id).then((doc)=>{
+    if(doc){
+        console.log('Removed ->'+JSON.stringify(doc,undefined,2));
+    } else {
+        console.log('Nothing to remove');
     }
-    else{
-        console.log('User email',JSON.stringify(users,undefined,2));
     }
-}).catch((e)=> console.log(e));
+).catch((e)=> console.log(e));
