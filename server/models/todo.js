@@ -14,7 +14,7 @@ var Todo = mongoose.model('Todo',{
         default: false
     },
     completedAt:{
-        type:Number,
+        type:String, //To be converted in Number if we want the date as "new Date.GetTime()"
         default: null
     }
 });

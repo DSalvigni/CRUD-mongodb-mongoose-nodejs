@@ -1,11 +1,12 @@
 //All the required libs...
-var express = require('express');
-var bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 const hbs = require('hbs');
 const moment = require('moment');
-var path = require('path');
+const path = require('path');
 const os = require('os');
 const {ObjectID} = require('mongodb');
+const _ = require('lodash');
 
 //External config libs
 var {mongoose} = require('./db-conf/mongoose.js');
@@ -28,6 +29,7 @@ const PORT = process.env.PORT||5000;
 app.get('/',(req,res)=>{
     res.render('home.hbs',{ts});
     console.log('Connected to HOME '+ts);
+
 }); 
 
 
@@ -61,7 +63,7 @@ if(!ObjectID.isValid(id)){
     }
 }); 
 
-
+//delete a note per id
 app.get('/todos/delete/:id',(req,res)=>{
     var id = req.params.id;
     if(!ObjectID.isValid(id)){
@@ -88,10 +90,31 @@ app.get('/todos/delete/:id',(req,res)=>{
 }); 
 
 
+//delete a note per id by using DELETE method
+app.delete('/todos/:id',(req,res)=>{
+    var id = req.params.id;
+    if(!ObjectID.isValid(id)){
+        res.status(404);// Uncommet this line and comment next line to pass the test..send();
+        res.render('404.hbs');
+    } else {
+        Todo.findOneAndRemove(id).then((doc)=>{
+            if(doc){
+                //console.log('Removed ->'+JSON.stringify(doc,undefined,2));
+                res.render('deleted.hbs',{doc});
+            } else {
+                res.status(404);// Uncommet this line and comment next line to pass the test. .send();
+                res.render('404.hbs');
+            }
+            }
+        ).catch((e)=> 
+        {
+          //console.log(e);
+          res.status(400).send();
+        });
+    }
+}); 
 
 
-
-//delete a note per id
 
 
 
@@ -108,6 +131,42 @@ app.post('/todos',(req,res)=>{
         res.status(400).send(e);
     });
 }); 
+
+//Update method
+app.patch('/todos/:id',(req,res)=> {
+    var id = req.params.id;
+    //This is done to permit user to update only these 2 fields in the db
+    var body = _.pick(req.body,['text','completed']);
+    if(!ObjectID.isValid(id)){
+        res.status(404);// Uncommet this line and comment next line to pass the test..send();
+        res.render('404.hbs');
+    } 
+
+    if(_.isBoolean(body.completed) && body.completed) {
+            body.completedAt = moment().format('YYYY-MM-DD_HH:mm:ss_Z');//new Date().getTime();
+        } else {
+            body.completed = false;
+            body.completedAt = null;
+        }
+        Todo.findByIdAndUpdate(id, {$set: body}, {new: true} ).then((todo) => {
+            if(!todo){
+                res.status(404);// Uncommet this line and comment next line to pass the test..send();
+                res.render('404.hbs');
+            }
+            res.send({todo});
+
+        }).catch((e)=>{
+            res.status(400).send(e);
+        })
+});
+
+//
+ //If nothing respons...404
+ app.get('/*',(req,res)=>{
+    res.render('404.hbs');
+}); 
+
+
 
 //Start the server and log info in console
 app.listen(PORT,() => {
