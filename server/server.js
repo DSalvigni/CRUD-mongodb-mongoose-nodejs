@@ -43,12 +43,12 @@ app.get('/todos/:id',(req,res) => {
     var id = req.params.id;
     if(!ObjectID.isValid(id)){
             res.status(404);// Uncommet this line and comment next line to pass the test..send();
-            res.render('404.hbs');
+            res.render('./404.hbs');
         } else {
             Todo.findById(id).then((todo)=>{
                 if(!todo){
                     res.status(404);// Uncommet this line and comment next line to pass the test. .send();
-                    res.render('404.hbs');
+                    res.render('./404.hbs');
                 } else {
                     //FInally response as an object{...}
                     res.send({todo});
