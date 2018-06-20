@@ -70,8 +70,6 @@ app.get('/todos/delete/:id',(req,res)=>{
         res.status(404);// Uncommet this line and comment next line to pass the test..send();
         res.render('404.hbs');
     } else {
-
-
         Todo.findOneAndRemove(id).then((doc)=>{
             if(doc){
                 //console.log('Removed ->'+JSON.stringify(doc,undefined,2));
